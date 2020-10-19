@@ -24,7 +24,7 @@ class Dropzone extends React.Component {
         dropRegion.addEventListener('dragleave', this.preventDefault, false)
         dropRegion.addEventListener('dragover', this.preventDefault, false)
         dropRegion.addEventListener('drop', this.preventDefault, false)
-        dropRegion.addEventListener('drop', this.handleDrop, false);
+        dropRegion.addEventListener('drop', this.handleDrop.bind(this), false);
     }
 
     makeFakeInput() {
@@ -119,7 +119,7 @@ class Dropzone extends React.Component {
         }
     }
 
-    handleDrop(e) {
+    handleDrop (e) {
 
         var dt = e.dataTransfer,
             files = dt.files;
@@ -141,7 +141,7 @@ class Dropzone extends React.Component {
                             theBlob.name = fileName;
                             return theBlob;
                         }
-                        handleFiles(
+                        this.handleFiles(
                             new Array(
                                 blobToFile(
                                     blob, Math.random().toString(36).substring(7) + "." + blob.type.split("/")[1]

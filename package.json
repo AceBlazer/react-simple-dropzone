@@ -1,6 +1,6 @@
 {
   "name": "react-simple-dropzone",
-  "version": "1.0.17",
+  "version": "1.0.18",
   "description": "simple, easy to use dropzone for react with a small, light bundle size of 130kb, it contains only the necessary functionnalities written with vanilla javascript it includes also drag and drop images from browser (within the same website or another website).",
   "repository": {
     "type": "git",
