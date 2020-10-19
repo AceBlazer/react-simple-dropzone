@@ -1,0 +1,67 @@
+{
+  "name": "react-simple-dropzone",
+  "version": "1.0.17",
+  "description": "simple, easy to use dropzone for react with a small, light bundle size of 130kb, it contains only the necessary functionnalities written with vanilla javascript it includes also drag and drop images from browser (within the same website or another website).",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AceBlazer/react-simple-dropzone.git"
+  },
+  "author": {
+    "name": "ace.blazer",
+    "email": "saanoun.jasser21@gmail.com"
+  },
+  "keywords": [
+    "react dropzone",
+    "dropzone",
+    "drag n drop",
+    "drag & drop",
+    "image upload",
+    "dropzone navigator",
+    "simple dropzone",
+    "simple image upload",
+    "base64",
+    "blob"
+  ],
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AceBlazer/react-simple-dropzone/issues"
+  },
+  "homepage": "https://github.com/AceBlazer/react-simple-dropzone#readme",
+  "dependencies": {
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0"
+  },
+  "scripts": {
+    "start": "webpack-dev-server --mode development --open --hot",
+    "build": "webpack --mode development"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@babel/plugin-transform-react-jsx": "^7.12.1",
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.4",
+    "babel-plugin-transform-react-jsx": "^6.24.1",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-react": "^6.24.1",
+    "css-loader": "^0.28.11",
+    "html-webpack-plugin": "^3.1.0",
+    "style-loader": "^0.20.3",
+    "webpack": "^4.19.0",
+    "webpack-cli": "^3.0.4",
+    "webpack-dev-server": "^3.1.1"
+  }
+}
