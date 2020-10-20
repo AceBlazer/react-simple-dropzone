@@ -3,9 +3,7 @@ React-simple-dropzone
 
 
 ### Description
-Simple, easy to use dropzone with preview for react.
-With a small, light bundle size of 130kb, it contains only the necessary functionnalities written with vanilla javascript.
-**It includes also drag and drop images from browser (within the same website or another website).**
+Simple, easy to use dropzone with preview for react.  With a small, light bundle size of less than 150kb, it contains only the necessary functionnalities written with vanilla javascript.  **It includes also drag and drop images from browser (within the same website or another website).**
 
 
 ### Examples
