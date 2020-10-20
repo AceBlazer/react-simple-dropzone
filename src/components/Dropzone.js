@@ -7,7 +7,7 @@ class Dropzone extends React.Component {
 
     constructor(props) {
         super(props);
-        
+
     }
 
     componentDidMount() {
@@ -32,8 +32,8 @@ class Dropzone extends React.Component {
         // open file selector when clicked on the drop region
         var fakeInput = document.createElement("input");
         fakeInput.type = "file";
-        fakeInput.accept = "image/*";
-        fakeInput.multiple = false;
+        fakeInput.accept = this.props.accept;
+        fakeInput.multiple = this.props.multiple;
         dropRegion.addEventListener('click', function () {
             fakeInput.click();
         });
@@ -50,21 +50,25 @@ class Dropzone extends React.Component {
         e.stopPropagation();
     }
 
-    
+
 
 
     validateImage(image) {
         // check the type
-        var validTypes = ['image/jpeg', 'image/png', 'image/gif'];
+        var validTypes = this.props.validTypes;
         if (validTypes.indexOf(image.type) === -1) {
-            alert("Invalid File Type");
+            if (this.props.onError !== undefined) {
+                this.props.onError("Invalid File Type");
+            }
             return false;
         }
 
         // check the size
-        var maxSizeInBytes = 10e6; // 10MB
+        var maxSizeInBytes = this.props.maxSize;
         if (image.size > maxSizeInBytes) {
-            alert("File too large");
+            if (this.props.onError !== undefined) {
+                this.props.onError("File too large");
+            }
             return false;
         }
 
@@ -73,31 +77,43 @@ class Dropzone extends React.Component {
     }
 
 
+    clearPreview() {
+        var imagePreviewRegion = document.getElementById("image-preview");
+        imagePreviewRegion.innerHTML = "";
+    }
+
+
     previewAnduploadImage(image) {
 
-        var imagePreviewRegion = document.getElementById("image-preview");
+        if (this.props.preview == true) {
+            var imagePreviewRegion = document.getElementById("image-preview");
 
-        // container
-        var imgView = document.createElement("div");
-        imgView.className = "image-view";
-        imagePreviewRegion.appendChild(imgView);
+            // container
+            var imgView = document.createElement("div");
+            imgView.className = "image-view";
+            imagePreviewRegion.appendChild(imgView);
 
-        // previewing image
-        var img = document.createElement("img");
-        img.src = image.cre;
-        imgView.appendChild(img);
+            // create preview image
+            var img = document.createElement("img");
+            img.src = image.cre;
+            imgView.appendChild(img);
 
-        // progress overlay
-        var overlay = document.createElement("div");
-        overlay.className = "overlay";
-        imgView.appendChild(overlay);
+
+            // progress overlay
+            var overlay = document.createElement("div");
+            overlay.className = "overlay";
+            imgView.appendChild(overlay);
+        }
+
 
         var that = this;
 
         // read the image...
         var reader = new FileReader();
-        reader.onload = function (e) {
-            img.src = e.target.result;
+        reader.onload = (e) => {
+            if (this.props.preview == true) {
+                img.src = e.target.result;
+            }
             if (that.props.onSuccessB64 !== undefined) {
                 that.props.onSuccessB64(e.target.result)
             }
@@ -113,13 +129,26 @@ class Dropzone extends React.Component {
 
 
     handleFiles(files) {
-
-        if (this.validateImage(files[files.length - 1])) {
-            this.previewAnduploadImage(files[files.length - 1]);
+        if (this.props.clearOnInput == true) {
+            this.clearPreview();
         }
+
+        if (this.props.multiple == true) {
+            Array.from(files).forEach(f => {
+                if (this.validateImage(f)) {
+                    this.previewAnduploadImage(f);
+                }
+            });
+
+        } else {
+            if (this.validateImage(files[files.length - 1])) {
+                this.previewAnduploadImage(files[files.length - 1]);
+            }
+        }
+
     }
 
-    handleDrop (e) {
+    handleDrop(e) {
 
         var dt = e.dataTransfer,
             files = dt.files;
@@ -127,28 +156,35 @@ class Dropzone extends React.Component {
             this.handleFiles(files);
         } else {
             //drag andd drop fm chrome
-            var html = dt.getData('text/html'),
-                match = html && /\bsrc="?([^"\s]+)"?\s*/.exec(html),
-                url = match && match[1];
-            if (url) {
-                fetch(url)
-                    .then(res => {
-                        return res.blob()
-                    })
-                    .then(blob => {
-                        var blobToFile = (theBlob, fileName) => {
-                            theBlob.lastModifiedDate = new Date();
-                            theBlob.name = fileName;
-                            return theBlob;
-                        }
-                        this.handleFiles(
-                            new Array(
-                                blobToFile(
-                                    blob, Math.random().toString(36).substring(7) + "." + blob.type.split("/")[1]
+            if (this.props.dragFromWeb == true) {
+                var html = dt.getData('text/html'),
+                    match = html && /\bsrc="?([^"\s]+)"?\s*/.exec(html),
+                    url = match && match[1];
+                if (url) {
+                    fetch(url)
+                        .then(res => {
+                            return res.blob()
+                        })
+                        .then(blob => {
+                            var blobToFile = (theBlob, fileName) => {
+                                theBlob.lastModifiedDate = new Date();
+                                theBlob.name = fileName;
+                                return theBlob;
+                            }
+                            this.handleFiles(
+                                new Array(
+                                    blobToFile(
+                                        blob, Math.random().toString(36).substring(7) + "." + blob.type.split("/")[1]
+                                    )
                                 )
                             )
-                        )
-                    })
+                        })
+                        .catch(err => {
+                            if (this.props.onError !== undefined) {
+                                this.props.onError(err);
+                            }
+                        })
+                }
             }
         }
     }
@@ -163,8 +199,8 @@ class Dropzone extends React.Component {
             <React.Fragment>
                 <div id="drop-region" style={{ width: "100%" }}>
                     <div className="drop-message">
-                        Drag & Drop images or click to upload
-            </div>
+                        {this.props.displayText}
+                    </div>
                     <div id="image-preview"></div>
                 </div>
             </React.Fragment>
@@ -176,12 +212,30 @@ class Dropzone extends React.Component {
 
 Dropzone.propTypes = {
     onSuccessBlob: PropTypes.func,
-    onSuccessB64: PropTypes.func
+    onSuccessB64: PropTypes.func,
+    onError: PropTypes.func,
+    displayText: PropTypes.string,
+    accept: PropTypes.string,
+    validTypes: PropTypes.array,
+    dragFromWeb: PropTypes.bool,
+    multiple: PropTypes.bool,
+    maxSize: PropTypes.any,
+    clearOnInput: PropTypes.bool,
+    preview: PropTypes.bool,
 };
 
 Dropzone.defaultProps = {
     onSuccessBlob: undefined,
-    onSuccessB64: undefined
+    onSuccessB64: undefined,
+    onError: undefined,
+    displayText: "Drag & Drop images or click to upload",
+    validTypes: ['image/jpeg', 'image/png', 'image/gif'],
+    accept: "image/*",
+    dragFromWeb: true,
+    multiple: false,
+    clearOnInput: true,
+    preview: true,
+    maxSize: 10e6 // 10MB
 };
 
 
